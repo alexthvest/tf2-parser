@@ -2,7 +2,7 @@ const vdf  = require('simple-vdf');
 const path = require('path'); 
 const fs   = require('fs'); 
 
-const config = require('../config.json'); 
+const config = JSON.parse(fs.readFileSync(path.join(path.dirname(process.execPath), 'config.json'), 'utf8')); 
 const items  = [];
 
 const itemsPath = path.join(config.game_path, 'tf/scripts/items/items_game.txt');
