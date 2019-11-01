@@ -1,0 +1,22 @@
+{
+  "name": "ts2-parser",
+  "version": "1.0.0",
+  "description": "TF2 items parser",
+  "main": "src/index.js",
+  "keywords": [
+    "tf2",
+    "parser",
+    "items"
+  ],
+  "author": {
+    "name": "alexthvest",
+    "email": "alexthvest@gmail.com"
+  },
+  "license": "MIT",
+  "scripts": {
+    "start": "node ."
+  },
+  "dependencies": {
+    "simple-vdf": "^1.1.1"
+  }
+}
