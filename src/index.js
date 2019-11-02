@@ -3,12 +3,12 @@ const path = require('path');
 const fs   = require('fs'); 
 const util = require('util');
 
-// const config = JSON.parse(fs.readFileSync(path.join(path.dirname(process.execPath), 'config.json'), 'utf8')); 
+const config = JSON.parse(fs.readFileSync(path.join(path.dirname(process.execPath), 'config.json'), 'utf8')); 
 let items    = [];
 
-const config = {
-    game_path: 'C:/Users/alext/Desktop/tf2'
-};
+// const config = {
+//     game_path: 'C:/Users/alext/Desktop/tf2'
+// };
 
 const itemsPath = path.join(config.game_path, 'tf/scripts/items/items_game.txt');
 const langPath  = path.join(config.game_path, 'tf/resource/tf_russian.txt');
