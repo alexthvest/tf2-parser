@@ -18,9 +18,9 @@ const { lang }       = vdf.parse(fs.readFileSync(langPath, 'utf16le'));
 
 function parsePrefab(prefab) {
     const prefabs  = prefab.split(' ');
-    const paintKit = prefabs.find(prefab => prefab.startsWith('paintkit'));
+    const paintKit = prefabs.find(prefab => prefab.startsWith('paintkit_weapon_'));
 
-    if (paintKit && paintKit != 'paintkit_base') 
+    if (paintKit) 
         return parsePrefab(items_game.prefabs[paintKit].prefab);
 
     const weapon = prefabs.find(prefab => prefab.startsWith('weapon'));
@@ -57,7 +57,6 @@ function parsePrefabInfo(prefab, info) {
 }
 
 for (const id in items_game.items) {
-    _id = parseInt(id);
 
     const item  = items_game.items[id];
     const _item = {
@@ -69,6 +68,7 @@ for (const id in items_game.items) {
     }
 
     if (id === 'default') continue;
+
     if (item.prefab && item.prefab.includes('paintkit_tool')) continue;
 
     if (item.used_by_classes) {
