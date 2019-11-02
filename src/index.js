@@ -16,12 +16,14 @@ const langPath  = path.join(config.game_path, 'tf/resource/tf_russian.txt');
 const { items_game } = vdf.parse(fs.readFileSync(itemsPath, 'utf8'));
 const { lang }       = vdf.parse(fs.readFileSync(langPath, 'utf16le'));
 
-function parsePrefab(prefab) {
+function parsePrefab(item, prefab, info = {}) {
     const prefabs  = prefab.split(' ');
     const paintKit = prefabs.find(prefab => prefab.startsWith('paintkit_weapon_'));
 
-    if (paintKit) 
-        return parsePrefab(items_game.prefabs[paintKit].prefab);
+    if (paintKit) {
+        info.name = item.name;
+        return parsePrefab(item, items_game.prefabs[paintKit].prefab, info);
+    }
 
     const weapon = prefabs.find(prefab => prefab.startsWith('weapon'));
     if (!weapon) return;
@@ -29,8 +31,10 @@ function parsePrefab(prefab) {
     prefab = items_game.prefabs[weapon];
     if (!prefab) return; 
 
-    return parsePrefabInfo(prefab, {});
+    return parsePrefabInfo(prefab, info);
 }
+
+let _id = 0;
 
 function parsePrefabInfo(prefab, info) {
     if (prefab.used_by_classes && !info.slot) {
@@ -57,18 +61,18 @@ function parsePrefabInfo(prefab, info) {
 }
 
 for (const id in items_game.items) {
+    _id = id;
 
     const item  = items_game.items[id];
     const _item = {
         id: parseInt(id),
         class: null,
         slot: null,
-        name: item.item_name,
+        name: item.item_name || item.name,
         rus_name: null
     }
 
     if (id === 'default') continue;
-
     if (item.prefab && item.prefab.includes('paintkit_tool')) continue;
 
     if (item.used_by_classes) {
@@ -81,8 +85,12 @@ for (const id in items_game.items) {
     }
 
     if (item.prefab && (!_item.slot || !_item.class || !_item.name)) {
-        const prefab = parsePrefab(item.prefab);
+        const prefab = parsePrefab(item, item.prefab);
         if (!prefab) continue;
+
+        if (id === '15115') {
+            console.log(prefab.name);
+        }
 
         _item.name  = prefab.name || _item.name;
         _item.slot  = _item.slot  || prefab.slot;
