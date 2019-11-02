@@ -20,6 +20,10 @@ function parsePrefab(item, prefab, info = {}) {
     const prefabs  = prefab.split(' ');
     const paintKit = prefabs.find(prefab => prefab.startsWith('paintkit_weapon_'));
 
+    if (_id === '9') {
+        console.log(_id);
+    }
+
     if (paintKit) {
         info.name = item.name;
         return parsePrefab(item, items_game.prefabs[paintKit].prefab, info);
@@ -33,8 +37,6 @@ function parsePrefab(item, prefab, info = {}) {
 
     return parsePrefabInfo(prefab, info);
 }
-
-let _id = 0;
 
 function parsePrefabInfo(prefab, info) {
     if (prefab.used_by_classes && !info.slot) {
@@ -61,14 +63,12 @@ function parsePrefabInfo(prefab, info) {
 }
 
 for (const id in items_game.items) {
-    _id = id;
-
     const item  = items_game.items[id];
     const _item = {
         id: parseInt(id),
         class: null,
         slot: null,
-        name: item.item_name || item.name,
+        name: null,
         rus_name: null
     }
 
@@ -88,15 +88,12 @@ for (const id in items_game.items) {
         const prefab = parsePrefab(item, item.prefab);
         if (!prefab) continue;
 
-        if (id === '15115') {
-            console.log(prefab.name);
-        }
-
-        _item.name  = prefab.name || _item.name;
+        _item.name  = prefab.name;
         _item.slot  = _item.slot  || prefab.slot;
         _item.class = _item.class || prefab.class;
     }
 
+    _item.name = _item.name || item.item_name || item.name;
     _item.name = _item.name.replace('#', '');
 
     _item.rus_name = lang.Tokens[_item.name] || item.name;
