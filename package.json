@@ -15,7 +15,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node .",
-    "build": "pkg src/index.js --target node12-win-x64 --output buid/tf2parser.exe"
+    "build": "pkg src/index.js --target node12-win-x64 --output build/tf2parser.exe"
   },
   "dependencies": {
     "pkg": "^4.4.0",

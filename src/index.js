@@ -1,17 +1,20 @@
 const vdf  = require('simple-vdf');
 const path = require('path'); 
 const fs   = require('fs'); 
+const util = require('util');
 
-const config = JSON.parse(fs.readFileSync(path.join(path.dirname(process.execPath), 'config.json'), 'utf8')); 
-const items  = [];
+// const config = JSON.parse(fs.readFileSync(path.join(path.dirname(process.execPath), 'config.json'), 'utf8')); 
+let items    = [];
+
+const config = {
+    game_path: 'C:/Users/alext/Desktop/tf2'
+};
 
 const itemsPath = path.join(config.game_path, 'tf/scripts/items/items_game.txt');
 const langPath  = path.join(config.game_path, 'tf/resource/tf_russian.txt');
 
 const { items_game } = vdf.parse(fs.readFileSync(itemsPath, 'utf8'));
 const { lang }       = vdf.parse(fs.readFileSync(langPath, 'utf16le'));
-
-fs.writeFileSync('items', JSON.stringify(items_game.items, null, 4));
 
 function parsePrefab(prefab) {
     const prefabs  = prefab.split(' ');
@@ -34,8 +37,13 @@ function parsePrefabInfo(prefab, info) {
         const classes = Object.keys(prefab.used_by_classes);
         if (classes.length === 1) info.class = classes[0];
         else {
-            info.slot  = prefab.used_by_classes[classes[0]];
-            info.class = classes[0];
+            info.slot  = [];
+            info.class = [];
+
+            for (const cl of classes) {
+                info.slot.push(prefab.used_by_classes[cl]);
+                info.class.push(cl);
+            }
         }
     }
 
@@ -90,13 +98,52 @@ for (const id in items_game.items) {
 }
 
 const converted = {};
-items.sort((a, b) => a.id - b.id).forEach(item => {
+
+const slots = {
+    primary: 0,
+    secondary: 1,
+    melee: 2,
+    pda: 3,
+    pda2: 4,
+    building: 5
+};
+
+const classes = {
+    scout: 2,
+    soldier: 8,
+    pyro: 128,
+    demoman: 16,
+    heavy: 64,
+    engineer: 512,
+    medic: 32,
+    sniper: 4,
+    spy: 256
+};
+
+items = items.sort((a, b) => a.id - b.id);
+for (const item of items) {
+    if (util.isArray(item.slot)) {
+        item.slot = 1;
+    } else {
+        if (!(item.slot in slots)) continue;
+        item.slot = slots[item.slot];
+    }
+
+    if (util.isArray(item.class)) {
+        item.class = item.class.reduce((result, cl) => {
+            result += classes[cl];
+            return result;
+        }, 0);
+    } else {
+        item.class = classes[item.class];
+    }
+
     converted[item.id] = {
         slot: item.slot,
         class: item.class,
         name: item.name,
         rus_name: item.rus_name
     };
-});
+}
 
 fs.writeFileSync('items.txt', vdf.stringify(converted, true));
