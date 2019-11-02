@@ -20,10 +20,6 @@ function parsePrefab(item, prefab, info = {}) {
     const prefabs  = prefab.split(' ');
     const paintKit = prefabs.find(prefab => prefab.startsWith('paintkit_weapon_'));
 
-    if (_id === '9') {
-        console.log(_id);
-    }
-
     if (paintKit) {
         info.name = item.name;
         return parsePrefab(item, items_game.prefabs[paintKit].prefab, info);
